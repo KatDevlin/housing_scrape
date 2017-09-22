@@ -11,10 +11,14 @@ this <- file.path("http://gis.vgsi.com/newhavenct/",
 z <- scan(this, what="", sep="\n")
 
 # If we look at `z` we can see the contents from the first database entry 
-# were successfully puled in. Now let's scrape a bunch.
+# were successfully puled in. Now let's scrape a bunch. The database 
+# contains more than 27K entries; for this demo I'm capping it at 100.
 
 baseurl <- file.path("http://gis.vgsi.com/newhavenct/",
                      "Parcel.aspx?Pid=XXX")
+
+# Tons of variables. Let's look at assessment price, # of bedrooms,
+# area of the living spaces.
 
 x <- data.frame(Assessment=rep(NA, 100), Bedrooms=rep(NA,100),
                 LvngArea=rep(NA,100))
@@ -34,8 +38,10 @@ for (i in 1:100) {
   x$LvngArea[i] <- as.numeric(temp3)
 } 
 
+# Turn the data into a .csv
 write.csv(x, file="housing_scrape.csv")
 
+# Check it all worked.
 head(x)
 tail(x)
 #
