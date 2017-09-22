@@ -17,7 +17,7 @@ Task: create a data.frame with 100 rows and three (3) columns:
 
 ```{r URL_setup}
 baseurl <- file.path("http://www.stat.yale.edu/~jay/230/Homework",
-                     "Homework9/NewHavenExample/XXX.html")
+  "Homework9/NewHavenExample/XXX.html")
 x <- data.frame(Assessment=rep(NA, 100), Bedrooms=rep(NA,100),
                 LvngArea=rep(NA,100))
 
