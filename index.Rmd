@@ -1,0 +1,81 @@
+---
+title: "Scrape of New Haven Housing Data"
+author: "Kat Devlin"
+date: "2017/9/21"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## New Haven Housing Scrape Redux
+
+Adaptation from a grad stats homework assignment. I know there are R 
+packages to handle scraping, but for class we were not permitted
+to use outside packages for this exercise. 
+
+# setwd("/Users/katdevlin/Desktop/housing_scrape")
+
+```{r}
+this <- file.path("http://gis.vgsi.com/newhavenct/",
+                  "Parcel.aspx?Pid=1")
+z <- scan(this, what="", sep="\n")
+```
+If we look at `z` we can see the contents from the first database entry 
+were successfully pulled in. Now let's scrape a bunch. The online database 
+contains more than 27K entries; for this demo I'm capping it at 100.
+
+```{r URL_setup}
+baseurl <- file.path("http://gis.vgsi.com/newhavenct/",
+                     "Parcel.aspx?Pid=XXX")
+
+# Just doing this for the output
+options( warn = -1 )
+```
+
+The database also has a ton of variables. I chose to just look at three:
+assessment price, # of bedrooms, area of the living spaces. Now I'll turn 
+it into a dataframe and clean it up.
+
+```{r}
+x <- data.frame(Assessment=rep(NA, 100), Bedrooms=rep(NA,100),
+                LvngArea=rep(NA,100))
+
+for (i in 1:100) {
+  thisurl <- gsub("XXX", i, baseurl)
+  z <- scan(thisurl, what="", sep="\n")
+  temp <- z[grep(".*GenAssessment.*</dd>", z)]
+  temp <- gsub(".*\\$([0-9,]+).*", "\\1", temp)
+  temp <- gsub(",","", temp)
+  temp2 <- z[grep("Bed", z, fixed=TRUE)]
+  temp2 <- gsub(".*([0-9]+).*", "\\1", temp2)
+  temp3 <- z[grep("BldArea", z, fixed=TRUE)]
+  temp3 <- gsub(".*>([0-9]+).*", "\\1", temp3)
+  x$Assessment[i] <- as.numeric(temp)
+  x$Bedrooms[i] <- as.numeric(temp2)
+  x$LvngArea[i] <- as.numeric(temp3)
+} 
+```
+
+With a quick look through the original databse, I noticed some properties are 
+not houses, e.g. the airport. My thinking is Living Area = 0 makes sense for non-residential properties, so no need to make NA. However, if there is no 
+living area there cannot be a bedroom, so makes more sense to  have bedrooms 
+with NAs than listed with 0 bedrooms. 
+
+Save data as .csv.
+
+```{r csv}
+write.csv(x, file="housing_scrape.csv")
+```
+
+This is a check required as part of the original assignment:
+
+```{r check, echo = FALSE}
+head(x)
+tail(x)
+
+for (i in 1:ncol(x)) {
+  print(str(x[,i])) 
+}
+```
