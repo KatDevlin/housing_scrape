@@ -51,7 +51,8 @@ for (i in 1:100) {
   temp2 <- z[grep("Bed", z, fixed=TRUE)]
   temp2 <- gsub(".*([0-9]+).*", "\\1", temp2)
   temp3 <- z[grep("BldArea", z, fixed=TRUE)]
-  temp3 <- gsub(".*>([0-9]+).*", "\\1", temp3)
+  temp3 <- gsub(".*>([0-9,]+).*", "\\1", temp3)
+  temp3 <- as.numeric(gsub(",", "", temp3))
   x$Assessment[i] <- as.numeric(temp)
   x$Bedrooms[i] <- as.numeric(temp2)
   x$LvngArea[i] <- as.numeric(temp3)

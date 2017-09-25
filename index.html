@@ -126,10 +126,9 @@ $(document).ready(function () {
 <div id="new-haven-housing-scrape-redux" class="section level2">
 <h2>New Haven Housing Scrape Redux</h2>
 <p>Adaptation from a grad stats homework assignment. I know there are R packages to handle scraping, but for class we were not permitted to use outside packages for this exercise.</p>
-</div>
-<div id="setwduserskatdevlindesktophousing_scrape" class="section level1">
-<h1>setwd(“/Users/katdevlin/Desktop/housing_scrape”)</h1>
-<pre class="r"><code>this &lt;- file.path(&quot;http://gis.vgsi.com/newhavenct/&quot;,
+<pre class="r"><code># setwd(&quot;/Users/katdevlin/Desktop/housing_scrape&quot;)
+
+this &lt;- file.path(&quot;http://gis.vgsi.com/newhavenct/&quot;,
                   &quot;Parcel.aspx?Pid=1&quot;)
 z &lt;- scan(this, what=&quot;&quot;, sep=&quot;\n&quot;)</code></pre>
 <p>If we look at <code>z</code> we can see the contents from the first database entry were successfully pulled in. Now let’s scrape a bunch. The online database contains more than 27K entries; for this demo I’m capping it at 100.</p>
@@ -151,7 +150,8 @@ for (i in 1:100) {
   temp2 &lt;- z[grep(&quot;Bed&quot;, z, fixed=TRUE)]
   temp2 &lt;- gsub(&quot;.*([0-9]+).*&quot;, &quot;\\1&quot;, temp2)
   temp3 &lt;- z[grep(&quot;BldArea&quot;, z, fixed=TRUE)]
-  temp3 &lt;- gsub(&quot;.*&gt;([0-9]+).*&quot;, &quot;\\1&quot;, temp3)
+  temp3 &lt;- gsub(&quot;.*&gt;([0-9,]+).*&quot;, &quot;\\1&quot;, temp3)
+  temp3 &lt;- as.numeric(gsub(&quot;,&quot;, &quot;&quot;, temp3))
   x$Assessment[i] &lt;- as.numeric(temp)
   x$Bedrooms[i] &lt;- as.numeric(temp2)
   x$LvngArea[i] &lt;- as.numeric(temp3)
@@ -163,22 +163,22 @@ for (i in 1:100) {
 <pre><code>##   Assessment Bedrooms LvngArea
 ## 1     879550       NA        0
 ## 2     393470       NA        0
-## 3     145670        3        1
-## 4     142030        3        1
+## 3     145670        3     1475
+## 4     142030        3     1792
 ## 5     115010        3      864
-## 6     105280        3        1</code></pre>
+## 6     105280        3     1040</code></pre>
 <pre><code>##     Assessment Bedrooms LvngArea
-## 95      105350        3        1
-## 96      109690        3        1
-## 97      186480        3        2
-## 98      208250        4        2
-## 99      159320        3        1
-## 100     133280        3        1</code></pre>
+## 95      105350        3     1040
+## 96      109690        3     1560
+## 97      186480        3     2880
+## 98      208250        4     2916
+## 99      159320        3     1632
+## 100     133280        3     1404</code></pre>
 <pre><code>##  num [1:100] 879550 393470 145670 142030 115010 ...
 ## NULL
 ##  num [1:100] NA NA 3 3 3 3 5 3 2 1 ...
 ## NULL
-##  num [1:100] 0 0 1 1 864 1 1 1 1 985 ...
+##  num [1:100] 0 0 1475 1792 864 ...
 ## NULL</code></pre>
 </div>
 
