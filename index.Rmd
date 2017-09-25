@@ -15,9 +15,9 @@ Adaptation from a grad stats homework assignment. I know there are R
 packages to handle scraping, but for class we were not permitted
 to use outside packages for this exercise. 
 
+```{r}
 # setwd("/Users/katdevlin/Desktop/housing_scrape")
 
-```{r}
 this <- file.path("http://gis.vgsi.com/newhavenct/",
                   "Parcel.aspx?Pid=1")
 z <- scan(this, what="", sep="\n")
